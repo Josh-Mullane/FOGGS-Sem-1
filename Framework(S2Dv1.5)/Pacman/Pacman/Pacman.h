@@ -49,6 +49,9 @@ private:
 	int _pacmanFrame, _pacmanCurrentFrameTime;
 	const int _cPacmanFrameTime;
 
+	int _munchieFrame, _munchieCurrentFrameTime;
+	const int _cMunchieFrameTime;
+
 	void Input(int elapsedTime, Input::KeyboardState* state);
 
 	void CheckPaused(Input::KeyboardState* state, Input::Keys pauseKey);

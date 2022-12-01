@@ -18,6 +18,6 @@ C:\Users\m014035m\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\
 C:\Users\m014035m\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(84,53): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\m014035m\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(91,52): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\m014035m\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(92,53): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\m014035m\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(152,51): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\m014035m\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(158,52): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\m014035m\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(126,51): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\m014035m\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(132,52): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   Pacman.vcxproj -> C:\Users\m014035m\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Debug\Pacman.exe

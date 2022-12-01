@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), _cPacmanFrameTime(250)/*, _cMunchieFrameTime(500)*/
+Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
 {
 	_frameCount = 0;
 	_paused = false;
@@ -10,13 +10,13 @@ Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), 
 	_pacmanDirection = 0;
 	_pacmanCurrentFrameTime = 0;
 	_pacmanFrame = 0;
-	/*_munchieCurrentFrameTime = 0;*/
+	_munchieCurrentFrameTime = 0;
 
 	//Initialise important Game aspects
 	Graphics::Initialise(argc, argv, this, 1024, 768, false, 25, 25, "Pacman", 60);
 	Input::Initialise();
 
-	// Start the Game Loop - This calls Update and Draw in game loop
+	// Start the Game Loop - This calls Update 6and Draw in game loop
 	Graphics::StartGameLoop();
 }
 
@@ -103,25 +103,6 @@ void Pacman::Input(int elapsedTime, Input::KeyboardState* state)
 	}
 }
 
-void Pacman::CheckPaused(Input::KeyboardState* state, Input::Keys pauseKey)
-{
-
-}
-
-void Pacman::CheckViewportCollision()
-{
-
-}
-
-void updatePacman(int elapsedTime)
-{
-
-}
-
-void updateMunchie(int elapsedTime)
-{
-
-}
 
 void Pacman::Update(int elapsedTime)
 
@@ -166,12 +147,12 @@ void Pacman::Update(int elapsedTime)
 	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
 		_escKeyDown = false;
 
-	//if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
-	//	_escKeyDown = false;
+	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
+		_escKeyDown = false;
 
-	/*_munchieCurrentFrameTime += elapsedTime;*/
+	_munchieCurrentFrameTime += elapsedTime;
 
-	/*if (_munchieCurrentFrameTime > _cMunchieFrameTime)
+	if (_munchieCurrentFrameTime > _cMunchieFrameTime)
 	{
 		_frameCount++;
 
@@ -179,7 +160,7 @@ void Pacman::Update(int elapsedTime)
 			_frameCount = 0;
 
 		_munchieCurrentFrameTime = 0;
-	}*/
+	}
 
 }
 
@@ -203,19 +184,19 @@ void Pacman::Draw(int elapsedTime)
 
 	SpriteBatch::Draw(_PacmanTexture, _PacmanPosition, _PacmanSourceRect); // Draws Pacman
 
-	if (_frameCount < 30)
+	if (_frameCount < 10)
 	{
 		// Draws Red Munchie
 		SpriteBatch::Draw(_munchieInvertedTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
 
-		//_frameCount++;
+		_frameCount++;
 	}
 	else
 	{
 		// Draw Blue Munchie
 		SpriteBatch::Draw(_munchieBlueTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
 		
-		//_frameCount++;
+		_frameCount++;
 
 		if (_frameCount >= 60)
 			_frameCount = 0;
