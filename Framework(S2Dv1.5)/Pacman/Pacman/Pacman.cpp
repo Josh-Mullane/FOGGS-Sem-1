@@ -37,12 +37,18 @@ void Pacman::LoadContent()
 	_PacmanPosition = new Vector2(350.0f, 350.0f);
 	_PacmanSourceRect = new Rect(0.0f, 0.0f, 32, 32);
 
+	// Load Clyde
+	_clydeTexture = new Texture2D();
+	_clydeTexture->Load("Textures/Clyde.png", false);
+	_clydePosition = new Vector2(Graphics::GetViewportWidth() / 2.0f - 32, Graphics::GetViewportHeight() / 2.0f - 32);
+	_clydeSourceRect = new Rect(0.0f, 0.0f, 32, 32);
+
 	// Load Munchie
 	_munchieBlueTexture = new Texture2D();
 	_munchieBlueTexture->Load("Textures/Munchie.tga", true);
 	_munchieInvertedTexture = new Texture2D();
 	_munchieInvertedTexture->Load("Textures/MunchieInverted.tga", true);
-	_munchieRect = new Rect(100.0f, 450.0f, 12, 12);
+	/*_munchieRect = new Rect(100.0f, 450.0f, 12, 12);*/
 
 	// Set string position
 	_stringPosition = new Vector2(10.0f, 25.0f);
@@ -142,7 +148,12 @@ void Pacman::Update(int elapsedTime)
 	if (keyboardState->IsKeyDown(Input::Keys::ESCAPE) && !_escKeyDown)
 	{
 		_escKeyDown = true;
-		_paused = !_paused;
+		//_paused = !_paused;
+
+		for (int i = 0; i < 5; i++)
+		{
+			SpawnProjectile(Projectile::straight);
+		}
 	}
 	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
 		_escKeyDown = false;
@@ -162,6 +173,46 @@ void Pacman::Update(int elapsedTime)
 		_munchieCurrentFrameTime = 0;
 	}
 
+	for (int i = 0; i < Projectiles.size(); i++)
+	{
+		UpdateProjectile(Projectiles[i]);
+	}
+}
+
+void Pacman::SpawnProjectile(Projectile::projectileType type)
+{
+	Projectile* tempObject = new Projectile();
+	Projectiles.push_back(tempObject);
+
+	tempObject->thisProjectileType = type;
+	tempObject->speed = 5.0f; 
+	tempObject->_projectilePosition = new Vector2(Graphics::GetViewportWidth() / 2.0f - 32, Graphics::GetViewportHeight() / 2.0f - 32);
+	tempObject->_targetPosition = new Vector2(_PacmanPosition->X, _PacmanPosition->Y);
+	tempObject->_projectileSourceRect = _munchieRect;
+	tempObject->_projectileTexture = _munchieInvertedTexture; 
+	int diffX = tempObject->_targetPosition->X - tempObject->_projectilePosition->X;
+	int diffY = tempObject->_targetPosition->Y - tempObject->_projectilePosition->Y;
+
+	tempObject->angle = (float)atan2(diffY, diffX);
+}
+void Pacman::UpdateProjectile(Projectile* projectileUpdating)
+{
+
+	if (projectileUpdating->thisProjectileType == projectileUpdating->straight)
+	{
+		
+
+		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
+		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
+	}
+	else if (projectileUpdating->thisProjectileType == projectileUpdating->predictive)
+	{
+		
+	}
+	else if (projectileUpdating->thisProjectileType == projectileUpdating->burst)
+	{
+		
+	}
 }
 
 void Pacman::Draw(int elapsedTime)
@@ -176,7 +227,10 @@ void Pacman::Draw(int elapsedTime)
 		SpriteBatch::DrawString(menuStream.str().c_str(), _menuStringPosition, Color::Red);
 	}
 	
-	
+	for (int i = 0; i < Projectiles.size(); i++)
+	{
+		SpriteBatch::Draw(Projectiles[i]->_projectileTexture, Projectiles[i]->_projectilePosition, Projectiles[i]->_projectileSourceRect);
+	}
 	
 	// Allows us to easily create a string
 	std::stringstream stream;
@@ -184,24 +238,26 @@ void Pacman::Draw(int elapsedTime)
 
 	SpriteBatch::Draw(_PacmanTexture, _PacmanPosition, _PacmanSourceRect); // Draws Pacman
 
-	if (_frameCount < 10)
-	{
-		// Draws Red Munchie
-		SpriteBatch::Draw(_munchieInvertedTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
+	//if (_frameCount < 10)
+	//{
+	//	// Draws Red Munchie
+	//	SpriteBatch::Draw(_munchieInvertedTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
 
-		_frameCount++;
-	}
-	else
-	{
-		// Draw Blue Munchie
-		SpriteBatch::Draw(_munchieBlueTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
-		
-		_frameCount++;
+	//	_frameCount++;
+	//}
+	//else
+	//{
+	//	// Draw Blue Munchie
+	//	SpriteBatch::Draw(_munchieBlueTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
+	//	
+	//	_frameCount++;
 
-		if (_frameCount >= 60)
-			_frameCount = 0;
-	}
+	//	if (_frameCount >= 60)
+	//		_frameCount = 0;
+	//}
 	
+	SpriteBatch::Draw(_clydeTexture, _clydePosition, _clydeSourceRect);
+
 	// Draws String
 	SpriteBatch::DrawString(stream.str().c_str(), _stringPosition, Color::Green);
 	SpriteBatch::EndDraw(); 

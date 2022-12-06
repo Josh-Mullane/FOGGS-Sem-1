@@ -10,9 +10,22 @@
 
 // Just need to include main header file
 #include "S2D/S2D.h"
-
+#include <vector>
 // Reduces the amount of typing by including all classes in S2D namespace
 using namespace S2D;
+
+struct Projectile {
+	enum projectileType{straight, burst, predictive};
+	projectileType thisProjectileType; 
+	Vector2* _projectilePosition;
+	Rect* _projectileSourceRect;
+	Texture2D* _projectileTexture;
+	Vector2* _targetPosition;
+	float angle;
+
+	float speed; 
+	/*int _pacmanDirection;*/
+};
 
 // Declares the Pacman class which inherits from the Game class.
 // This allows us to overload the Game class methods to help us
@@ -21,11 +34,23 @@ class Pacman : public Game
 {
 private:
 
+	//Cpoordinate system 2
+
+	//const int middleX = 1024/2;
+	//const int middleY = 768 / 2;
+
 	// Data to represent Pacman
 	Vector2* _PacmanPosition;
 	Rect* _PacmanSourceRect;
 	Texture2D* _PacmanTexture;
 	int _pacmanDirection;
+
+	vector<Projectile*>Projectiles;
+
+	// Data to represent Clyde
+	Vector2* _clydePosition;
+	Rect* _clydeSourceRect;
+	Texture2D* _clydeTexture;
 
 	// Data to represent Munchie
 	int _frameCount;
@@ -54,11 +79,8 @@ private:
 
 	void Input(int elapsedTime, Input::KeyboardState* state);
 
-	void CheckPaused(Input::KeyboardState* state, Input::Keys pauseKey);
-	void CheckViewportCollision();
-
-	void UpdatePacman(int elapsedTime);
-	void UpdateMunchie(int elapsedTime);
+	void SpawnProjectile(Projectile::projectileType type);
+	void UpdateProjectile(Projectile* projectileUpdating);
 
 public:
 	/// <summary> Constructs the Pacman class. </summary>
