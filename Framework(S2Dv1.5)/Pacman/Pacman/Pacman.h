@@ -11,6 +11,7 @@
 // Just need to include main header file
 #include "S2D/S2D.h"
 #include <vector>
+
 // Reduces the amount of typing by including all classes in S2D namespace
 using namespace S2D;
 
@@ -26,7 +27,7 @@ struct Projectile {
 	float speed; 
 	/*int _pacmanDirection;*/
 };
-Projectile* tempObject;
+
 // Declares the Pacman class which inherits from the Game class.
 // This allows us to overload the Game class methods to help us
 // load content, draw and update our game.
@@ -34,10 +35,6 @@ class Pacman : public Game
 {
 private:
 
-	//Cpoordinate system 2
-
-	//const int middleX = 1024/2;
-	//const int middleY = 768 / 2;
 
 	// Data to represent Pacman
 	Vector2* _PacmanPosition;
@@ -65,6 +62,7 @@ private:
 	Vector2* _stringPosition;
 
 	float _cPacmanSpeed;
+	Projectile* tempObject;
 
 	Texture2D* _menuBackground;
 	Rect* _menuRectangle;
@@ -81,6 +79,7 @@ private:
 
 	void SpawnProjectile(Projectile::projectileType type);
 	void UpdateProjectile(Projectile* projectileUpdating);
+
 
 public:
 	/// <summary> Constructs the Pacman class. </summary>

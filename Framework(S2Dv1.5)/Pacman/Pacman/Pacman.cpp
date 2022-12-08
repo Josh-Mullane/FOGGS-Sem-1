@@ -145,16 +145,21 @@ void Pacman::Update(int elapsedTime)
 
 		
 	}
+	
 	if (keyboardState->IsKeyDown(Input::Keys::ESCAPE) && !_escKeyDown)
 	{
 		_escKeyDown = true;
 		//_paused = !_paused;
 
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; ++i)
 		{
-			SpawnProjectile(Projectile::burst);
-			tempObject->angle++;
-			SpawnProjectile(Projectile::burst);
+
+				SpawnProjectile(Projectile::burst);
+				tempObject->angle++;
+				SpawnProjectile(Projectile::burst);
+				tempObject->angle--;
+				SpawnProjectile(Projectile::burst);		
+
 		}
 	}
 	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
@@ -165,45 +170,37 @@ void Pacman::Update(int elapsedTime)
 
 	_munchieCurrentFrameTime += elapsedTime;
 
-	if (_munchieCurrentFrameTime > _cMunchieFrameTime)
-	{
-		_frameCount++;
 
-		if (_frameCount >= 2)
-			_frameCount = 0;
-
-		_munchieCurrentFrameTime = 0;
-	}
 
 	for (int i = 0; i < Projectiles.size(); i++)
 	{
 		UpdateProjectile(Projectiles[i]);
 	}
+
 }
 
 void Pacman::SpawnProjectile(Projectile::projectileType type)
 {
-	new Projectile();
+	tempObject = new Projectile();
 	Projectiles.push_back(tempObject);
 
 	tempObject->thisProjectileType = type;
-	tempObject->speed = 5.0f; 
+	tempObject->speed = 4.0f; 
 	tempObject->_projectilePosition = new Vector2(Graphics::GetViewportWidth() / 2.0f - 32, Graphics::GetViewportHeight() / 2.0f - 32);
-	tempObject->_targetPosition = new Vector2(_PacmanPosition->X, _PacmanPosition->Y);
+	tempObject->_targetPosition = new Vector2(_PacmanPosition->X+16, _PacmanPosition->Y+16);
 	tempObject->_projectileSourceRect = _munchieRect;
 	tempObject->_projectileTexture = _munchieInvertedTexture; 
-	int diffX = tempObject->_targetPosition->X+16 - tempObject->_projectilePosition->X;
-	int diffY = tempObject->_targetPosition->Y+16 - tempObject->_projectilePosition->Y;
+	int diffX = tempObject->_targetPosition->X - tempObject->_projectilePosition->X;
+	int diffY = tempObject->_targetPosition->Y - tempObject->_projectilePosition->Y;
 
 	tempObject->angle = (float)atan2(diffY, diffX);
+
 }
 void Pacman::UpdateProjectile(Projectile* projectileUpdating)
 {
 
 	if (projectileUpdating->thisProjectileType == projectileUpdating->straight)
 	{
-		
-
 		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
 		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
 	}
@@ -213,6 +210,7 @@ void Pacman::UpdateProjectile(Projectile* projectileUpdating)
 	}
 	else if (projectileUpdating->thisProjectileType == projectileUpdating->burst)
 	{
+		
 		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
 		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
 	}
