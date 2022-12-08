@@ -152,7 +152,9 @@ void Pacman::Update(int elapsedTime)
 
 		for (int i = 0; i < 5; i++)
 		{
-			SpawnProjectile(Projectile::straight);
+			SpawnProjectile(Projectile::burst);
+			tempObject->angle++;
+			SpawnProjectile(Projectile::burst);
 		}
 	}
 	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
@@ -181,7 +183,7 @@ void Pacman::Update(int elapsedTime)
 
 void Pacman::SpawnProjectile(Projectile::projectileType type)
 {
-	Projectile* tempObject = new Projectile();
+	new Projectile();
 	Projectiles.push_back(tempObject);
 
 	tempObject->thisProjectileType = type;
@@ -190,8 +192,8 @@ void Pacman::SpawnProjectile(Projectile::projectileType type)
 	tempObject->_targetPosition = new Vector2(_PacmanPosition->X, _PacmanPosition->Y);
 	tempObject->_projectileSourceRect = _munchieRect;
 	tempObject->_projectileTexture = _munchieInvertedTexture; 
-	int diffX = tempObject->_targetPosition->X - tempObject->_projectilePosition->X;
-	int diffY = tempObject->_targetPosition->Y - tempObject->_projectilePosition->Y;
+	int diffX = tempObject->_targetPosition->X+16 - tempObject->_projectilePosition->X;
+	int diffY = tempObject->_targetPosition->Y+16 - tempObject->_projectilePosition->Y;
 
 	tempObject->angle = (float)atan2(diffY, diffX);
 }
@@ -211,7 +213,8 @@ void Pacman::UpdateProjectile(Projectile* projectileUpdating)
 	}
 	else if (projectileUpdating->thisProjectileType == projectileUpdating->burst)
 	{
-		
+		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
+		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
 	}
 }
 
