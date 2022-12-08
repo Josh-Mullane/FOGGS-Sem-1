@@ -1,7 +1,8 @@
 #include "Pacman.h"
 
 #include <sstream>
-
+#include <ctime>
+#include <cstdlib>
 Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
 {
 	_frameCount = 0;
@@ -116,6 +117,8 @@ void Pacman::Update(int elapsedTime)
 	Input::KeyboardState* keyboardState = Input::Keyboard::GetState();
 	if (!_paused)
 	{
+		int randNum = rand();
+		int randRemainder = randNum % 2;
 		Input(elapsedTime, keyboardState);
 
 		if (_pacmanCurrentFrameTime > _cPacmanFrameTime)
@@ -143,15 +146,44 @@ void Pacman::Update(int elapsedTime)
 		_menuRectangle = new Rect(0.0f, 0.0f, Graphics::GetViewportWidth(), Graphics::GetViewportHeight());
 		_menuStringPosition = new Vector2(Graphics::GetViewportWidth() / 2.0f, Graphics::GetViewportHeight() / 2.0f);
 
-		
+		if (_frameCount == 60)
+		{
+			if (randRemainder == 1)
+			{
+
+
+				SpawnProjectile(Projectile::burst);
+				tempObject->angle++;
+				SpawnProjectile(Projectile::burst);
+				tempObject->angle--;
+				SpawnProjectile(Projectile::burst);
+			}
+			else
+				SpawnProjectile(Projectile::straight);
+
+		}
 	}
-	
+
+
+	/*if (_frameCount == 60)
+	{
+		for (int i = 0; i < 5; ++i)
+		{
+
+			SpawnProjectile(Projectile::burst);
+			tempObject->angle++;
+			SpawnProjectile(Projectile::burst);
+			tempObject->angle--;
+			SpawnProjectile(Projectile::burst);
+
+		}
+	}*/
 	if (keyboardState->IsKeyDown(Input::Keys::ESCAPE) && !_escKeyDown)
 	{
 		_escKeyDown = true;
-		//_paused = !_paused;
+		_paused = !_paused;
 
-		for (int i = 0; i < 5; ++i)
+		/*for (int i = 0; i < 5; ++i)
 		{
 
 				SpawnProjectile(Projectile::burst);
@@ -159,8 +191,8 @@ void Pacman::Update(int elapsedTime)
 				SpawnProjectile(Projectile::burst);
 				tempObject->angle--;
 				SpawnProjectile(Projectile::burst);		
-
-		}
+				
+		}*/
 	}
 	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
 		_escKeyDown = false;
@@ -176,6 +208,9 @@ void Pacman::Update(int elapsedTime)
 	{
 		UpdateProjectile(Projectiles[i]);
 	}
+	_frameCount++;
+	if (_frameCount == 61)
+		_frameCount = 0;
 
 }
 
