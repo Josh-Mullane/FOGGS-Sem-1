@@ -26,7 +26,7 @@ struct Projectile {
 	float speed; 
 	/*int _pacmanDirection;*/
 };
-Projectile* tempObject = new Projectile();
+
 // Declares the Pacman class which inherits from the Game class.
 // This allows us to overload the Game class methods to help us
 // load content, draw and update our game.
@@ -34,6 +34,10 @@ class Pacman : public Game
 {
 private:
 
+	//Cpoordinate system 2
+
+	//const int middleX = 1024/2;
+	//const int middleY = 768 / 2;
 
 	// Data to represent Pacman
 	Vector2* _PacmanPosition;
