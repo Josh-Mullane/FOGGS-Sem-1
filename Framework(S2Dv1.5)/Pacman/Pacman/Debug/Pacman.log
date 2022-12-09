@@ -21,8 +21,8 @@ C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\P
 C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(99,53): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(135,51): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(141,52): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(207,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(228,12): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(229,12): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(266,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(183,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(227,55): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(228,55): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Pacman\Pacman.cpp(264,20): warning C4018: '<': signed/unsigned mismatch
   Pacman.vcxproj -> C:\Users\joshu\OneDrive\Documents\GitHub\FOGGS-Sem-1\Framework(S2Dv1.5)\Pacman\Debug\Pacman.exe

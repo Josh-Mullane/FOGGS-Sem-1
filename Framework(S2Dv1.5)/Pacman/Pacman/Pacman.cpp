@@ -3,7 +3,7 @@
 #include <sstream>
 #include <ctime>
 #include <cstdlib>
-Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
+Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.15f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
 {
 	_frameCount = 0;
 	_paused = false;
@@ -63,51 +63,51 @@ void Pacman::LoadContent()
 
 void Pacman::Input(int elapsedTime, Input::KeyboardState* state)
 {
-	Input::KeyboardState* keyboardState = Input::Keyboard::GetState();
-	if (!_paused)
+Input::KeyboardState* keyboardState = Input::Keyboard::GetState();
+if (!_paused)
+{
+	if (keyboardState->IsKeyDown(Input::Keys::D))
 	{
-		if (keyboardState->IsKeyDown(Input::Keys::D))
-		{
-			_PacmanPosition->X += _cPacmanSpeed * elapsedTime;
-			_pacmanDirection = 0;
-			_pacmanCurrentFrameTime += elapsedTime;
-			_PacmanSourceRect->X = _PacmanSourceRect->Width * _pacmanFrame;
-			_PacmanSourceRect->Y = _PacmanSourceRect->Height * _pacmanDirection;
-		}
-		if (keyboardState->IsKeyDown(Input::Keys::A))
-		{
-			_PacmanPosition->X -= _cPacmanSpeed * elapsedTime;
-			_pacmanDirection = 2;
-			_pacmanCurrentFrameTime += elapsedTime;
-			_PacmanSourceRect->X = _PacmanSourceRect->Width * _pacmanFrame;
-			_PacmanSourceRect->Y = _PacmanSourceRect->Height * _pacmanDirection;
-		}
-		if (keyboardState->IsKeyDown(Input::Keys::W))
-		{
-			_PacmanPosition->Y -= _cPacmanSpeed * elapsedTime;
-			_pacmanDirection = 3;
-			_pacmanCurrentFrameTime += elapsedTime;
-			_PacmanSourceRect->X = _PacmanSourceRect->Width * _pacmanFrame;
-			_PacmanSourceRect->Y = _PacmanSourceRect->Height * _pacmanDirection;
-		}
-		if (keyboardState->IsKeyDown(Input::Keys::S))
-		{
-			_PacmanPosition->Y += _cPacmanSpeed * elapsedTime;
-			_pacmanDirection = 1;
-			_pacmanCurrentFrameTime += elapsedTime;
-			_PacmanSourceRect->X = _PacmanSourceRect->Width * _pacmanFrame;
-			_PacmanSourceRect->Y = _PacmanSourceRect->Height * _pacmanDirection;
-		}
-		if (_pacmanCurrentFrameTime > _cPacmanFrameTime)
-		{
-			_pacmanFrame++;
-
-			if (_pacmanFrame >= 2)
-				_pacmanFrame = 0;
-
-			_pacmanCurrentFrameTime = 0;
-		}
+		_PacmanPosition->X += _cPacmanSpeed * elapsedTime;
+		_pacmanDirection = 0;
+		_pacmanCurrentFrameTime += elapsedTime;
+		_PacmanSourceRect->X = _PacmanSourceRect->Width * _pacmanFrame;
+		_PacmanSourceRect->Y = _PacmanSourceRect->Height * _pacmanDirection;
 	}
+	if (keyboardState->IsKeyDown(Input::Keys::A))
+	{
+		_PacmanPosition->X -= _cPacmanSpeed * elapsedTime;
+		_pacmanDirection = 2;
+		_pacmanCurrentFrameTime += elapsedTime;
+		_PacmanSourceRect->X = _PacmanSourceRect->Width * _pacmanFrame;
+		_PacmanSourceRect->Y = _PacmanSourceRect->Height * _pacmanDirection;
+	}
+	if (keyboardState->IsKeyDown(Input::Keys::W))
+	{
+		_PacmanPosition->Y -= _cPacmanSpeed * elapsedTime;
+		_pacmanDirection = 3;
+		_pacmanCurrentFrameTime += elapsedTime;
+		_PacmanSourceRect->X = _PacmanSourceRect->Width * _pacmanFrame;
+		_PacmanSourceRect->Y = _PacmanSourceRect->Height * _pacmanDirection;
+	}
+	if (keyboardState->IsKeyDown(Input::Keys::S))
+	{
+		_PacmanPosition->Y += _cPacmanSpeed * elapsedTime;
+		_pacmanDirection = 1;
+		_pacmanCurrentFrameTime += elapsedTime;
+		_PacmanSourceRect->X = _PacmanSourceRect->Width * _pacmanFrame;
+		_PacmanSourceRect->Y = _PacmanSourceRect->Height * _pacmanDirection;
+	}
+	if (_pacmanCurrentFrameTime > _cPacmanFrameTime)
+	{
+		_pacmanFrame++;
+
+		if (_pacmanFrame >= 2)
+			_pacmanFrame = 0;
+
+		_pacmanCurrentFrameTime = 0;
+	}
+}
 }
 
 
@@ -118,7 +118,7 @@ void Pacman::Update(int elapsedTime)
 	if (!_paused)
 	{
 		int randNum = rand();
-		int randRemainder = randNum % 2;
+		int randRemainder = 3;/*randNum % 3;*/
 		Input(elapsedTime, keyboardState);
 
 		if (_pacmanCurrentFrameTime > _cPacmanFrameTime)
@@ -158,45 +158,20 @@ void Pacman::Update(int elapsedTime)
 				tempObject->angle--;
 				SpawnProjectile(Projectile::burst);
 			}
-			else
+			else if (randRemainder == 0)
 				SpawnProjectile(Projectile::straight);
-
+			else
+				SpawnProjectile(Projectile::predictive);
 		}
 	}
 
-
-	/*if (_frameCount == 60)
-	{
-		for (int i = 0; i < 5; ++i)
-		{
-
-			SpawnProjectile(Projectile::burst);
-			tempObject->angle++;
-			SpawnProjectile(Projectile::burst);
-			tempObject->angle--;
-			SpawnProjectile(Projectile::burst);
-
-		}
-	}*/
 	if (keyboardState->IsKeyDown(Input::Keys::ESCAPE) && !_escKeyDown)
 	{
 		_escKeyDown = true;
 		_paused = !_paused;
 
-		/*for (int i = 0; i < 5; ++i)
-		{
-
-				SpawnProjectile(Projectile::burst);
-				tempObject->angle++;
-				SpawnProjectile(Projectile::burst);
-				tempObject->angle--;
-				SpawnProjectile(Projectile::burst);		
-				
-		}*/
+	
 	}
-	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
-		_escKeyDown = false;
-
 	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
 		_escKeyDown = false;
 
@@ -225,12 +200,14 @@ void Pacman::SpawnProjectile(Projectile::projectileType type)
 	tempObject->_targetPosition = new Vector2(_PacmanPosition->X+16, _PacmanPosition->Y+16);
 	tempObject->_projectileSourceRect = _munchieRect;
 	tempObject->_projectileTexture = _munchieInvertedTexture; 
-	int diffX = tempObject->_targetPosition->X - tempObject->_projectilePosition->X;
-	int diffY = tempObject->_targetPosition->Y - tempObject->_projectilePosition->Y;
+	tempObject->diffX = tempObject->_targetPosition->X - tempObject->_projectilePosition->X;
+	tempObject->diffY = tempObject->_targetPosition->Y - tempObject->_projectilePosition->Y;
 
-	tempObject->angle = (float)atan2(diffY, diffX);
+	tempObject->angle = (float)atan2(tempObject->diffY, tempObject->diffX);
 
 }
+
+
 void Pacman::UpdateProjectile(Projectile* projectileUpdating)
 {
 
@@ -241,8 +218,10 @@ void Pacman::UpdateProjectile(Projectile* projectileUpdating)
 	}
 	else if (projectileUpdating->thisProjectileType == projectileUpdating->predictive)
 	{
-		
+		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
+		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
 	}
+
 	else if (projectileUpdating->thisProjectileType == projectileUpdating->burst)
 	{
 		
