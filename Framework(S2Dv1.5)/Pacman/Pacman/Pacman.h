@@ -23,8 +23,9 @@ struct Projectile {
 	Texture2D* _projectileTexture;
 	Vector2* _targetPosition;
 	float angle;
+
 	float speed; 
-	int diffX, diffY;
+	/*int _pacmanDirection;*/
 };
 
 // Declares the Pacman class which inherits from the Game class.
@@ -77,7 +78,6 @@ private:
 	void Input(int elapsedTime, Input::KeyboardState* state);
 
 	void SpawnProjectile(Projectile::projectileType type);
-
 	void UpdateProjectile(Projectile* projectileUpdating);
 
 
@@ -96,7 +96,4 @@ public:
 
 	/// <summary> Called every frame - draw game here. </summary>
 	void virtual Draw(int elapsedTime);
-
-
-
 };
