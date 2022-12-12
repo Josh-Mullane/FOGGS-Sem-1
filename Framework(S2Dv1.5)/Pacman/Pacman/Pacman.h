@@ -23,7 +23,6 @@ struct Projectile {
 	Texture2D* _projectileTexture;
 	Vector2* _targetPosition;
 	float angle;
-
 	float speed; 
 	/*int _pacmanDirection;*/
 };
@@ -34,6 +33,12 @@ struct Projectile {
 class Pacman : public Game
 {
 private:
+
+
+	//Sound
+	SoundEffect* pew;
+	SoundEffect* legallyDistinctWakaWaka;
+	SoundEffect* triplePew;
 
 
 	// Data to represent Pacman

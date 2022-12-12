@@ -3,8 +3,10 @@
 #include <sstream>
 #include <ctime>
 #include <cstdlib>
+#include <iostream>
 Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
 {
+
 	_frameCount = 0;
 	_paused = false;
 	_escKeyDown = false;
@@ -12,8 +14,12 @@ Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), 
 	_pacmanCurrentFrameTime = 0;
 	_pacmanFrame = 0;
 	_munchieCurrentFrameTime = 0;
+	pew = new SoundEffect();
+	legallyDistinctWakaWaka = new SoundEffect();
+	triplePew = new SoundEffect();
 
 	//Initialise important Game aspects
+	Audio::Initialise();
 	Graphics::Initialise(argc, argv, this, 1024, 768, false, 25, 25, "Pacman", 60);
 	Input::Initialise();
 
@@ -28,6 +34,7 @@ Pacman::~Pacman()
 	delete _munchieBlueTexture;
 	delete _munchieInvertedTexture;
 	delete _munchieRect;
+	delete pew, legallyDistinctWakaWaka, triplePew;
 }
 
 void Pacman::LoadContent()
@@ -59,6 +66,12 @@ void Pacman::LoadContent()
 	_menuBackground->Load("Textures/Transparency.png", false);
 	_menuRectangle = new Rect(0.0f, 0.0f, Graphics::GetViewportWidth(), Graphics::GetViewportHeight());
 	_menuStringPosition = new Vector2(Graphics::GetViewportWidth() / 2.0f, Graphics::GetViewportHeight() / 2.0f);
+
+	//Sound
+	pew->Load("Sounds/pew.wav");
+	legallyDistinctWakaWaka->Load("Sounds/legallyDistinctWakaWaka.wakawaka.wav");
+	triplePew->Load("Sounds/triplePew.wav");
+
 }
 
 void Pacman::Input(int elapsedTime, Input::KeyboardState* state)
@@ -73,6 +86,7 @@ void Pacman::Input(int elapsedTime, Input::KeyboardState* state)
 			_pacmanCurrentFrameTime += elapsedTime;
 			_PacmanSourceRect->X = _PacmanSourceRect->Width * _pacmanFrame;
 			_PacmanSourceRect->Y = _PacmanSourceRect->Height * _pacmanDirection;
+			
 		}
 		if (keyboardState->IsKeyDown(Input::Keys::A))
 		{
@@ -148,10 +162,11 @@ void Pacman::Update(int elapsedTime)
 
 		if (_frameCount == 60)
 		{
+			
+			Audio::Play(legallyDistinctWakaWaka);
 			if (randRemainder == 1)
 			{
-
-
+				Audio::Play(triplePew);
 				SpawnProjectile(Projectile::burst);
 				tempObject->angle++;
 				SpawnProjectile(Projectile::burst);
@@ -159,40 +174,20 @@ void Pacman::Update(int elapsedTime)
 				SpawnProjectile(Projectile::burst);
 			}
 			else
+				Audio::Play(pew);
 				SpawnProjectile(Projectile::straight);
 
 		}
 	}
+	
+	
 
 
-	/*if (_frameCount == 60)
-	{
-		for (int i = 0; i < 5; ++i)
-		{
-
-			SpawnProjectile(Projectile::burst);
-			tempObject->angle++;
-			SpawnProjectile(Projectile::burst);
-			tempObject->angle--;
-			SpawnProjectile(Projectile::burst);
-
-		}
-	}*/
 	if (keyboardState->IsKeyDown(Input::Keys::ESCAPE) && !_escKeyDown)
 	{
 		_escKeyDown = true;
 		_paused = !_paused;
 
-		/*for (int i = 0; i < 5; ++i)
-		{
-
-				SpawnProjectile(Projectile::burst);
-				tempObject->angle++;
-				SpawnProjectile(Projectile::burst);
-				tempObject->angle--;
-				SpawnProjectile(Projectile::burst);		
-				
-		}*/
 	}
 	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
 		_escKeyDown = false;
