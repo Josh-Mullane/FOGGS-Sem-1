@@ -4,9 +4,10 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
 {
-
+	tempObject = new Projectile();
 	_frameCount = 0;
 	_paused = false;
 	_escKeyDown = false;
@@ -17,6 +18,7 @@ Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), 
 	pew = new SoundEffect();
 	legallyDistinctWakaWaka = new SoundEffect();
 	triplePew = new SoundEffect();
+	debug = new SoundEffect();
 
 	//Initialise important Game aspects
 	Audio::Initialise();
@@ -34,7 +36,29 @@ Pacman::~Pacman()
 	delete _munchieBlueTexture;
 	delete _munchieInvertedTexture;
 	delete _munchieRect;
-	delete pew, legallyDistinctWakaWaka, triplePew;
+	delete pew, legallyDistinctWakaWaka, triplePew, debug;
+}
+
+bool Pacman::CheckCollisions(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2)
+{
+	int left1 = x1;
+	int left2 = x2;
+	int right1 = x1 + width1;
+	int right2 = x2 + width2;
+	int top1 = y1;
+	int top2 = y2;
+	int bottom1 = y1 + height1;
+	int bottom2 = y2 + height2;
+	if (bottom1 < top2)
+		return false;
+	else if (top1 > bottom2)
+		return false;
+	else if (right1 < left2)
+		return false;
+	else if (left1 > right2)
+		return false;
+
+	return true;
 }
 
 void Pacman::LoadContent()
@@ -71,6 +95,7 @@ void Pacman::LoadContent()
 	pew->Load("Sounds/pew.wav");
 	legallyDistinctWakaWaka->Load("Sounds/legallyDistinctWakaWaka.wakawaka.wav");
 	triplePew->Load("Sounds/triplePew.wav");
+	debug->Load("Sounds/debug.wav");
 
 }
 
@@ -123,7 +148,39 @@ void Pacman::Input(int elapsedTime, Input::KeyboardState* state)
 		}
 	}
 }
+void Pacman::SpawnProjectile(Projectile::projectileType type)
+{
+	tempObject = new Projectile();
+	Projectiles.push_back(tempObject);
 
+	tempObject->thisProjectileType = type;
+	tempObject->speed = 4.0f; 
+	tempObject->_projectilePosition = new Vector2(Graphics::GetViewportWidth() / 2.0f - 32, Graphics::GetViewportHeight() / 2.0f - 32);
+	tempObject->_targetPosition = new Vector2(_PacmanPosition->X+16, _PacmanPosition->Y+16);
+	tempObject->_projectileSourceRect = _munchieRect;
+	tempObject->_projectileTexture = _munchieInvertedTexture; 
+	int diffX = tempObject->_targetPosition->X - tempObject->_projectilePosition->X;
+	int diffY = tempObject->_targetPosition->Y - tempObject->_projectilePosition->Y;
+
+	tempObject->angle = (float)atan2(diffY, diffX);
+
+	
+
+}
+void Pacman::UpdateProjectile(Projectile* projectileUpdating)
+{
+
+	if (projectileUpdating->thisProjectileType == projectileUpdating->straight)
+	{
+		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
+		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
+	}
+	else if (projectileUpdating->thisProjectileType == projectileUpdating->burst)
+	{
+		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
+		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
+	}
+}
 
 void Pacman::Update(int elapsedTime)
 
@@ -179,8 +236,11 @@ void Pacman::Update(int elapsedTime)
 
 		}
 	}
-	
-	
+	for (int j = 0; j < size(Projectiles); ++j)
+	{
+		if (CheckCollisions(_PacmanPosition->X, _PacmanPosition->Y, _PacmanSourceRect->Width, _PacmanSourceRect->Height, Projectiles[j]->_projectilePosition->X, Projectiles[j]->_projectilePosition->Y, 12, 12))
+			Projectiles[j]->_projectilePosition->X = 100000;
+	}
 
 
 	if (keyboardState->IsKeyDown(Input::Keys::ESCAPE) && !_escKeyDown)
@@ -197,7 +257,7 @@ void Pacman::Update(int elapsedTime)
 
 	_munchieCurrentFrameTime += elapsedTime;
 
-
+	
 
 	for (int i = 0; i < Projectiles.size(); i++)
 	{
@@ -207,44 +267,11 @@ void Pacman::Update(int elapsedTime)
 	if (_frameCount == 61)
 		_frameCount = 0;
 
-}
-
-void Pacman::SpawnProjectile(Projectile::projectileType type)
-{
-	tempObject = new Projectile();
-	Projectiles.push_back(tempObject);
-
-	tempObject->thisProjectileType = type;
-	tempObject->speed = 4.0f; 
-	tempObject->_projectilePosition = new Vector2(Graphics::GetViewportWidth() / 2.0f - 32, Graphics::GetViewportHeight() / 2.0f - 32);
-	tempObject->_targetPosition = new Vector2(_PacmanPosition->X+16, _PacmanPosition->Y+16);
-	tempObject->_projectileSourceRect = _munchieRect;
-	tempObject->_projectileTexture = _munchieInvertedTexture; 
-	int diffX = tempObject->_targetPosition->X - tempObject->_projectilePosition->X;
-	int diffY = tempObject->_targetPosition->Y - tempObject->_projectilePosition->Y;
-
-	tempObject->angle = (float)atan2(diffY, diffX);
+	
 
 }
-void Pacman::UpdateProjectile(Projectile* projectileUpdating)
-{
 
-	if (projectileUpdating->thisProjectileType == projectileUpdating->straight)
-	{
-		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
-		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
-	}
-	else if (projectileUpdating->thisProjectileType == projectileUpdating->predictive)
-	{
-		
-	}
-	else if (projectileUpdating->thisProjectileType == projectileUpdating->burst)
-	{
-		
-		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
-		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
-	}
-}
+
 
 void Pacman::Draw(int elapsedTime)
 {
@@ -260,7 +287,7 @@ void Pacman::Draw(int elapsedTime)
 	
 	for (int i = 0; i < Projectiles.size(); i++)
 	{
-		SpriteBatch::Draw(Projectiles[i]->_projectileTexture, Projectiles[i]->_projectilePosition, Projectiles[i]->_projectileSourceRect);
+ 		SpriteBatch::Draw(Projectiles[i]->_projectileTexture, Projectiles[i]->_projectilePosition, Projectiles[i]->_projectileSourceRect);
 	}
 	
 	// Allows us to easily create a string

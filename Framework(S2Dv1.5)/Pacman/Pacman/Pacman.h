@@ -16,7 +16,7 @@
 using namespace S2D;
 
 struct Projectile {
-	enum projectileType{straight, burst, predictive};
+	enum projectileType{straight, burst};
 	projectileType thisProjectileType; 
 	Vector2* _projectilePosition;
 	Rect* _projectileSourceRect;
@@ -24,6 +24,8 @@ struct Projectile {
 	Vector2* _targetPosition;
 	float angle;
 	float speed; 
+	float topLeft, topRight, bottomLeft, bottomRight;
+	
 	/*int _pacmanDirection;*/
 };
 
@@ -39,6 +41,7 @@ private:
 	SoundEffect* pew;
 	SoundEffect* legallyDistinctWakaWaka;
 	SoundEffect* triplePew;
+	SoundEffect* debug;
 
 
 	// Data to represent Pacman
@@ -82,8 +85,10 @@ private:
 
 	void Input(int elapsedTime, Input::KeyboardState* state);
 
-	void SpawnProjectile(Projectile::projectileType type);
+	
 	void UpdateProjectile(Projectile* projectileUpdating);
+	boolean collisionCheck(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2);
+
 
 
 public:
@@ -101,4 +106,10 @@ public:
 
 	/// <summary> Called every frame - draw game here. </summary>
 	void virtual Draw(int elapsedTime);
+
+	void SpawnProjectile(Projectile::projectileType type);
+
+	bool Pacman::CheckCollisions(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2);
+	
+
 };
