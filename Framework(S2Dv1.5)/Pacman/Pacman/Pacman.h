@@ -16,7 +16,7 @@
 using namespace S2D;
 
 struct Projectile {
-	enum projectileType{straight, burst};
+	enum projectileType{straight, burst, pickup};
 	projectileType thisProjectileType; 
 	Vector2* _projectilePosition;
 	Rect* _projectileSourceRect;
@@ -26,8 +26,10 @@ struct Projectile {
 	float speed; 
 	float topLeft, topRight, bottomLeft, bottomRight;
 	
-	/*int _pacmanDirection;*/
+
 };
+
+
 
 // Declares the Pacman class which inherits from the Game class.
 // This allows us to overload the Game class methods to help us
@@ -51,8 +53,10 @@ private:
 	Rect* _PacmanSourceRect;
 	Texture2D* _PacmanTexture;
 	int _pacmanDirection;
+	int powerup = 0;
 
 	vector<Projectile*>Projectiles;
+
 
 	// Data to represent Clyde
 	Vector2* _clydePosition;
@@ -68,10 +72,14 @@ private:
 	//int _munchieFrame;
 	//int _munchieCurrentFrameTime;
 
-	// Represent HP
+	// Represent HP and powerup
 	Vector2* heartPosition;
 	Rect* heartRect;
 	Texture2D* heartTexture;
+
+	Vector2* orbPosition;
+	Rect* orbRect;
+	Texture2D* orbTexture;
 
 	// Position for String
 	Vector2* _stringPosition;
@@ -79,9 +87,11 @@ private:
 	float _cPacmanSpeed;
 	Projectile* tempObject;
 
+
 	Texture2D* _menuBackground;
 	Rect* _menuRectangle;
 	Vector2* _menuStringPosition;
+	Vector2* winStringPosition;
 	bool _paused;
 	bool _escKeyDown;
 	int _pacmanFrame, _pacmanCurrentFrameTime;
@@ -90,11 +100,15 @@ private:
 	int _munchieFrame, _munchieCurrentFrameTime;
 	const int _cMunchieFrameTime;
 	int pacmanHP = 3;
+	int speedup = 100;
+	int clydeDamage = 61;
+	int clydeHP = 3;
 
 	void Input(int elapsedTime, Input::KeyboardState* state);
 
 	
 	void UpdateProjectile(Projectile* projectileUpdating);
+
 	boolean collisionCheck(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2);
 
 
@@ -116,6 +130,7 @@ public:
 	void virtual Draw(int elapsedTime);
 
 	void SpawnProjectile(Projectile::projectileType type);
+
 
 	bool Pacman::CheckCollisions(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2);
 

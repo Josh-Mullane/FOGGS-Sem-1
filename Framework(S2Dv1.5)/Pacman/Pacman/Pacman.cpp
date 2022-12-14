@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
-Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
+Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.15f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
 {
 	tempObject = new Projectile();
 	_frameCount = 0;
@@ -63,7 +63,6 @@ bool Pacman::CheckCollisions(int x1, int y1, int width1, int height1, int x2, in
 		return false;
 	else if (left1 > right2)
 		return false;
-
 	return true;
 }
 
@@ -88,11 +87,16 @@ void Pacman::LoadContent()
 	_munchieInvertedTexture->Load("Textures/MunchieInverted.tga", true);
 	/*_munchieRect = new Rect(100.0f, 450.0f, 12, 12);*/
 
-	//Load heart
+	//Load heart and orb
 	heartTexture = new Texture2D();
 	heartTexture->Load("Textures/hearts.png", false);
 	heartRect = new Rect(0.0f, 0.0f, 96, 32);
 	heartPosition = new Vector2(932, 0);
+
+	orbTexture = new Texture2D();
+	orbTexture->Load("Textures/orbs.png", false);
+	orbRect = new Rect(0.0f, 0.0f, 96, 32);
+	orbPosition = new Vector2(1024, 32);
 	
 
 	// Set string position
@@ -103,6 +107,7 @@ void Pacman::LoadContent()
 	_menuBackground->Load("Textures/Transparency.png", false);
 	_menuRectangle = new Rect(0.0f, 0.0f, Graphics::GetViewportWidth(), Graphics::GetViewportHeight());
 	_menuStringPosition = new Vector2(Graphics::GetViewportWidth() / 2.0f, Graphics::GetViewportHeight() / 2.0f);
+	winStringPosition = new Vector2(Graphics::GetViewportWidth() / 2.0f, Graphics::GetViewportHeight() / 2.0f);
 
 	//Sound
 	pew->Load("Sounds/pew.wav");
@@ -189,11 +194,20 @@ void Pacman::UpdateProjectile(Projectile* projectileUpdating)
 
 	if (projectileUpdating->thisProjectileType == projectileUpdating->straight)
 	{
+		tempObject->_projectileTexture = _munchieInvertedTexture;
 		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
 		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
 	}
 	else if (projectileUpdating->thisProjectileType == projectileUpdating->burst)
 	{
+		tempObject->_projectileTexture = _munchieInvertedTexture;
+		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
+		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
+	}
+	
+	else if(projectileUpdating->thisProjectileType == projectileUpdating->pickup)
+	{
+		tempObject->_projectileTexture = _munchieBlueTexture;
 		projectileUpdating->_projectilePosition->X += projectileUpdating->speed * cos(projectileUpdating->angle);
 		projectileUpdating->_projectilePosition->Y += projectileUpdating->speed * sin(projectileUpdating->angle);
 	}
@@ -206,7 +220,7 @@ void Pacman::Update(int elapsedTime)
 	if (!_paused)
 	{
 		int randNum = rand();
-		int randRemainder = randNum % 2;
+		int randRemainder = randNum % 3;
 		Input(elapsedTime, keyboardState);
 
 		if (_pacmanCurrentFrameTime > _cPacmanFrameTime)
@@ -247,63 +261,87 @@ void Pacman::Update(int elapsedTime)
 				tempObject->angle--;
 				SpawnProjectile(Projectile::burst);
 			}
-			else
+			else if (randRemainder == 0)
+			{
 				Audio::Play(pew);
 				SpawnProjectile(Projectile::straight);
+			}
+			else
+			{
+				Audio::Play(pew);
+				SpawnProjectile(Projectile::pickup);
+			}
 
 		}
 	}
 	for (int j = 0; j < size(Projectiles); ++j)
 	{
-		if (CheckCollisions(_PacmanPosition->X, _PacmanPosition->Y, _PacmanSourceRect->Width, _PacmanSourceRect->Height, Projectiles[j]->_projectilePosition->X, Projectiles[j]->_projectilePosition->Y, 12, 12))
+		if (CheckCollisions(_PacmanPosition->X, _PacmanPosition->Y, _PacmanSourceRect->Width, _PacmanSourceRect->Height, Projectiles[j]->_projectilePosition->X, Projectiles[j]->_projectilePosition->Y, 12, 12) && speedup > 16)
 		{
-			//Basic damage taking collision
-			Projectiles[j]->_projectilePosition->X = 100000;
-			pacmanHP -= 1;
-			heartPosition->X += 32;
-			Audio::Play(damageOne);
 
-			if(pacmanHP == 2)
-				Audio::Play(damageOne);
-			else if(pacmanHP == 1)
-				Audio::Play(damageTwo);
-			else if(pacmanHP == 0)
-				Audio::Play(damageThree);
-	/*		switch (pacmanHP) {
-			case 2:
-				Audio::Play(damageOne);
+			if (Projectiles[j]->_projectileTexture == _munchieBlueTexture)
+				//Collision for pickup projectiles
+			{
+				Projectiles[j]->_projectilePosition->X = 100000;
+				powerup = 3;
+				orbPosition->X = 928;
+			}
 
-				break;
-			case 1:
-				Audio::Play(damageTwo);
+			else
+			{
+				//Basic damage taking collision
+				Projectiles[j]->_projectilePosition->X = 100000;
+				pacmanHP = pacmanHP - 1;
+				heartPosition->X += 32;
 
-				break;
-			case 0:
-				Audio::Play(damageThree);
 
-				break;
-			}*/
+
+				switch (pacmanHP) {
+				case 2:
+					Audio::Play(damageOne);
+
+					break;
+				case 1:
+					Audio::Play(damageTwo);
+
+					break;
+				case 0:
+					Audio::Play(damageThree);
+
+					break;
+				}
+			}
 		}
-
-			
 	}
 	
+	if (CheckCollisions(_PacmanPosition->X, _PacmanPosition->Y, _PacmanSourceRect->Width, _PacmanSourceRect->Height, _clydePosition->X, _clydePosition->Y, 32, 32) && speedup < 16 && clydeDamage > 61)
+	{
+		clydeDamage = 0;
+		clydeHP = clydeHP - 1;
 
+	}
 	if (keyboardState->IsKeyDown(Input::Keys::ESCAPE) && !_escKeyDown)
 	{
 		_escKeyDown = true;
 		_paused = !_paused;
 
 	}
-	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
-		_escKeyDown = false;
+	//for some reason if the duplicate here is removed, everything breaks. Do not delete!!
 
 	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
 		_escKeyDown = false;
 
+	if (keyboardState->IsKeyUp(Input::Keys::ESCAPE))
+		_escKeyDown = false;
+	//removing this also breaks the build despite it seemingly doing nothing at all.
 	_munchieCurrentFrameTime += elapsedTime;
 
-	
+	if (keyboardState->IsKeyDown(Input::Keys::SPACE) && powerup > 0 && speedup > 50)
+	{
+		speedup = 0;
+		powerup = powerup - 1;
+		orbPosition->X += 32;
+	}
 
 	for (int i = 0; i < Projectiles.size(); i++)
 	{
@@ -313,7 +351,23 @@ void Pacman::Update(int elapsedTime)
 	if (_frameCount == 61)
 		_frameCount = 0;
 
+	if (speedup < 15)
+		_cPacmanSpeed = 1;
+	else
+		_cPacmanSpeed = 0.15f;
+
+	if (clydeDamage < 61)
+	{
+		_clydeSourceRect->X = 32;
+	}
+	else
+		_clydeSourceRect->X = 0;
+
 	
+
+
+	speedup++;
+	clydeDamage++;
 
 }
 
@@ -328,7 +382,27 @@ void Pacman::Draw(int elapsedTime)
 		menuStream << "PAUSED!";
 
 		SpriteBatch::Draw(_menuBackground, _menuRectangle, nullptr);
-		SpriteBatch::DrawString(menuStream.str().c_str(), _menuStringPosition, Color::Red);
+		SpriteBatch::DrawString(menuStream.str().c_str(), _menuStringPosition, Color::Blue);
+	}
+	if (clydeHP == 0)
+	{
+		(_paused = true);
+		_menuStringPosition->X = 10000;
+		std::stringstream winStream;
+		winStream << "You Win!";
+
+		SpriteBatch::DrawString(winStream.str().c_str(), winStringPosition, Color::Green);
+		_clydePosition->X = 10000;
+	}
+	if (pacmanHP == 0)
+	{
+		(_paused = true);
+		_menuStringPosition->X = 10000;
+		std::stringstream winStream;
+		winStream << "You Lose";
+
+		SpriteBatch::DrawString(winStream.str().c_str(), winStringPosition, Color::Red);
+		_PacmanPosition->X = 1000000;
 	}
 	
 	for (int i = 0; i < Projectiles.size(); i++)
@@ -360,7 +434,7 @@ void Pacman::Draw(int elapsedTime)
 	}*/
 
 	SpriteBatch::Draw(heartTexture, heartPosition, heartRect);
-
+	SpriteBatch::Draw(orbTexture, orbPosition, orbRect);
 
 	// Draws String
 	SpriteBatch::DrawString(stream.str().c_str(), _stringPosition, Color::Green);
