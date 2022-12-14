@@ -42,7 +42,9 @@ private:
 	SoundEffect* legallyDistinctWakaWaka;
 	SoundEffect* triplePew;
 	SoundEffect* debug;
-
+	SoundEffect* damageOne;
+	SoundEffect* damageTwo;
+	SoundEffect* damageThree;
 
 	// Data to represent Pacman
 	Vector2* _PacmanPosition;
@@ -66,6 +68,11 @@ private:
 	//int _munchieFrame;
 	//int _munchieCurrentFrameTime;
 
+	// Represent HP
+	Vector2* heartPosition;
+	Rect* heartRect;
+	Texture2D* heartTexture;
+
 	// Position for String
 	Vector2* _stringPosition;
 
@@ -82,6 +89,7 @@ private:
 
 	int _munchieFrame, _munchieCurrentFrameTime;
 	const int _cMunchieFrameTime;
+	int pacmanHP = 3;
 
 	void Input(int elapsedTime, Input::KeyboardState* state);
 
@@ -110,6 +118,5 @@ public:
 	void SpawnProjectile(Projectile::projectileType type);
 
 	bool Pacman::CheckCollisions(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2);
-	
 
 };

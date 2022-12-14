@@ -19,6 +19,9 @@ Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), 
 	legallyDistinctWakaWaka = new SoundEffect();
 	triplePew = new SoundEffect();
 	debug = new SoundEffect();
+	damageOne = new SoundEffect();
+	damageTwo = new SoundEffect();
+	damageThree = new SoundEffect();
 
 	//Initialise important Game aspects
 	Audio::Initialise();
@@ -37,6 +40,9 @@ Pacman::~Pacman()
 	delete _munchieInvertedTexture;
 	delete _munchieRect;
 	delete pew, legallyDistinctWakaWaka, triplePew, debug;
+	delete _clydeTexture, _clydeSourceRect;
+	delete heartRect, heartTexture;
+	delete damageOne, damageTwo, damageThree;
 }
 
 bool Pacman::CheckCollisions(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2)
@@ -82,6 +88,13 @@ void Pacman::LoadContent()
 	_munchieInvertedTexture->Load("Textures/MunchieInverted.tga", true);
 	/*_munchieRect = new Rect(100.0f, 450.0f, 12, 12);*/
 
+	//Load heart
+	heartTexture = new Texture2D();
+	heartTexture->Load("Textures/hearts.png", false);
+	heartRect = new Rect(0.0f, 0.0f, 96, 32);
+	heartPosition = new Vector2(932, 0);
+	
+
 	// Set string position
 	_stringPosition = new Vector2(10.0f, 25.0f);
 
@@ -96,6 +109,10 @@ void Pacman::LoadContent()
 	legallyDistinctWakaWaka->Load("Sounds/legallyDistinctWakaWaka.wakawaka.wav");
 	triplePew->Load("Sounds/triplePew.wav");
 	debug->Load("Sounds/debug.wav");
+	//Damage sound effects
+	damageOne->Load("Sounds/damageOne.wav");
+	damageTwo->Load("Sounds/damageTwo.wav");
+	damageThree->Load("Sounds/damageThree.wav");
 
 }
 
@@ -239,9 +256,38 @@ void Pacman::Update(int elapsedTime)
 	for (int j = 0; j < size(Projectiles); ++j)
 	{
 		if (CheckCollisions(_PacmanPosition->X, _PacmanPosition->Y, _PacmanSourceRect->Width, _PacmanSourceRect->Height, Projectiles[j]->_projectilePosition->X, Projectiles[j]->_projectilePosition->Y, 12, 12))
+		{
+			//Basic damage taking collision
 			Projectiles[j]->_projectilePosition->X = 100000;
-	}
+			pacmanHP -= 1;
+			heartPosition->X += 32;
+			Audio::Play(damageOne);
 
+			if(pacmanHP == 2)
+				Audio::Play(damageOne);
+			else if(pacmanHP == 1)
+				Audio::Play(damageTwo);
+			else if(pacmanHP == 0)
+				Audio::Play(damageThree);
+	/*		switch (pacmanHP) {
+			case 2:
+				Audio::Play(damageOne);
+
+				break;
+			case 1:
+				Audio::Play(damageTwo);
+
+				break;
+			case 0:
+				Audio::Play(damageThree);
+
+				break;
+			}*/
+		}
+
+			
+	}
+	
 
 	if (keyboardState->IsKeyDown(Input::Keys::ESCAPE) && !_escKeyDown)
 	{
@@ -296,25 +342,25 @@ void Pacman::Draw(int elapsedTime)
 
 	SpriteBatch::Draw(_PacmanTexture, _PacmanPosition, _PacmanSourceRect); // Draws Pacman
 
-	//if (_frameCount < 10)
-	//{
-	//	// Draws Red Munchie
-	//	SpriteBatch::Draw(_munchieInvertedTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
-
-	//	_frameCount++;
-	//}
-	//else
-	//{
-	//	// Draw Blue Munchie
-	//	SpriteBatch::Draw(_munchieBlueTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
-	//	
-	//	_frameCount++;
-
-	//	if (_frameCount >= 60)
-	//		_frameCount = 0;
-	//}
 	
 	SpriteBatch::Draw(_clydeTexture, _clydePosition, _clydeSourceRect);
+
+
+	///For whatever reason, these two methods of drawing three hearts via loops doesn't work. I'm sure there it is fixable, but time is too limited and instead I opt for just extending the sprite and moving it.
+
+	/*for (k = 0; k < 64; k =+ 32);
+	{
+		SpriteBatch::Draw(heartTexture, heartPosition, heartRect);
+	}*/
+
+	/*while (k > 932)
+	{
+		SpriteBatch::Draw(heartTexture, heartPosition, heartRect);
+		k = k - 32;
+	}*/
+
+	SpriteBatch::Draw(heartTexture, heartPosition, heartRect);
+
 
 	// Draws String
 	SpriteBatch::DrawString(stream.str().c_str(), _stringPosition, Color::Green);
