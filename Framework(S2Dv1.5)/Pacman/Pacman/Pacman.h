@@ -47,6 +47,7 @@ private:
 	SoundEffect* damageOne;
 	SoundEffect* damageTwo;
 	SoundEffect* damageThree;
+	SoundEffect* ghostDamage;
 
 	// Data to represent Pacman
 	Vector2* _PacmanPosition;

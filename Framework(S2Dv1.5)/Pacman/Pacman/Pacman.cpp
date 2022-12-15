@@ -22,6 +22,7 @@ Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.15f),
 	damageOne = new SoundEffect();
 	damageTwo = new SoundEffect();
 	damageThree = new SoundEffect();
+	ghostDamage = new SoundEffect();
 
 	//Initialise important Game aspects
 	Audio::Initialise();
@@ -42,7 +43,7 @@ Pacman::~Pacman()
 	delete pew, legallyDistinctWakaWaka, triplePew, debug;
 	delete _clydeTexture, _clydeSourceRect;
 	delete heartRect, heartTexture;
-	delete damageOne, damageTwo, damageThree;
+	delete damageOne, damageTwo, damageThree, ghostDamage;
 }
 
 bool Pacman::CheckCollisions(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2)
@@ -118,6 +119,7 @@ void Pacman::LoadContent()
 	damageOne->Load("Sounds/damageOne.wav");
 	damageTwo->Load("Sounds/damageTwo.wav");
 	damageThree->Load("Sounds/damageThree.wav");
+	ghostDamage->Load("Sounds/ghostDamage.wav");
 
 }
 
@@ -318,6 +320,7 @@ void Pacman::Update(int elapsedTime)
 	{
 		clydeDamage = 0;
 		clydeHP = clydeHP - 1;
+		Audio::Play(ghostDamage);
 
 	}
 	if (keyboardState->IsKeyDown(Input::Keys::ESCAPE) && !_escKeyDown)
