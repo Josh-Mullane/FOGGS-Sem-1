@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+
 Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.15f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
 {
 	tempObject = new Projectile();
@@ -284,7 +285,8 @@ void Pacman::Update(int elapsedTime)
 			if (Projectiles[j]->_projectileTexture == _munchieBlueTexture)
 				//Collision for pickup projectiles
 			{
-				Projectiles[j]->_projectilePosition->X = 100000;
+		
+				Projectiles.erase(Projectiles.begin() + j);
 				powerup = 3;
 				orbPosition->X = 928;
 			}
@@ -292,7 +294,7 @@ void Pacman::Update(int elapsedTime)
 			else
 			{
 				//Basic damage taking collision
-				Projectiles[j]->_projectilePosition->X = 100000;
+				Projectiles.erase(Projectiles.begin() + j);
 				pacmanHP = pacmanHP - 1;
 				heartPosition->X += 32;
 
