@@ -284,7 +284,7 @@ void Pacman::Update(int elapsedTime)
 			if (Projectiles[j]->_projectileTexture == _munchieBlueTexture)
 				//Collision for pickup projectiles
 			{
-				Projectiles[j]->_projectilePosition->X = 100000;
+				Projectiles.erase(Projectiles.begin() + j);
 				powerup = 3;
 				orbPosition->X = 928;
 			}
@@ -292,7 +292,7 @@ void Pacman::Update(int elapsedTime)
 			else
 			{
 				//Basic damage taking collision
-				Projectiles[j]->_projectilePosition->X = 100000;
+				Projectiles.erase(Projectiles.begin() + j);
 				pacmanHP = pacmanHP - 1;
 				heartPosition->X += 32;
 
